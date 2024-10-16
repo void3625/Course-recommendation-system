@@ -1,0 +1,14 @@
+都在cmd上操作
+git clone https://github.com/void3625/Course-recommendation-system.git
+
+導航到項目目錄
+cd Course-recommendation-system
+
+使用 Docker Compose 啟動服務
+docker-compose up -d
+
+檢查容器狀態
+docker ps
+
+連接到資料庫
+docker exec -it course-recommendation-db psql -U postgre -d usermanagement
