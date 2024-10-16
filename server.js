@@ -2,22 +2,32 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { Pool } = require('pg'); // 引入 pg 模組中的 Pool
-
+require('dotenv').config(); // 加載 .env 文件中的環境變量
 const app = express();
 const port = 3000;
 
 app.use(cors()); // 允許跨域請求
 app.use(bodyParser.json()); // 使用 body-parser 來解析 JSON 請求
 
-// 配置 PostgreSQL 連接池
+// 設置資料庫連接配置
 const pool = new Pool({
-    user: 'postgres', // 你的 PostgreSQL 用戶名
-    host: 'localhost', // 伺服器位址 (如果是本地資料庫，則使用 localhost)
-    database: 'usermanagement', // 你的資料庫名稱
-    password: '123', // 你的資料庫密碼
-    port: 5432, // PostgreSQL 的默認端口號
-});
+    user: process.env.DB_USER,      // 使用環境變量
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+  });
 
+// 測試連接是否成功
+pool.connect((err, client, done) => {
+    if (err) {
+      console.error('資料庫連接失敗', err);
+    } else {
+      console.log('資料庫連接成功');
+      done(); // 關閉連接
+    }
+  });
+  
 // 定義登入的 API
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
