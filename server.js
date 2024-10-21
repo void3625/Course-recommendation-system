@@ -34,7 +34,7 @@ app.post('/login', async (req, res) => {
 
   try {
       // 使用正確的表名和雙引號
-      const result = await pool.query('SELECT * FROM "user" WHERE username = $1', [username]);
+      const result = await pool.query('SELECT * FROM "users" WHERE username = $1', [username]);
       
       if (result.rows.length === 0) {
           return res.status(400).json({ success: false, message: '用戶不存在' });
