@@ -12,3 +12,6 @@ docker ps
 
 連接到資料庫
 docker exec -it course-recommendation-db psql -U postgre -d usermanagement
+
+啟動
+nodemon server.js
