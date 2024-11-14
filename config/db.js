@@ -10,3 +10,12 @@ const pool = new Pool({
 });
 
 module.exports = pool;
+
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+      console.error('資料庫連接失敗:', err);
+    } else {
+      console.log('資料庫連接成功:', res.rows);
+    }
+  });
+  

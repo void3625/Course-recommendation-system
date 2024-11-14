@@ -46,13 +46,13 @@
         // 監聽表單提交事件
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); // 防止表單自動提交並刷新頁面
-
+    
             // 獲取使用者輸入的帳號和密碼
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-
+    
             // 使用 Fetch API 向後端發送請求
-            fetch('http://localhost:3000/login', { // 替換成你的後端 URL
+            fetch('http://localhost:3000/api/users/login', { // 替換成你的後端 URL
                 method: 'POST', // 使用 POST 方法發送資料
                 headers: {
                     'Content-Type': 'application/json', // 設置請求頭，表示發送 JSON 格式的數據
@@ -66,7 +66,8 @@
                 if (data.success) {
                     messageElement.innerText = '登入成功！';
                     messageElement.style.color = 'green';
-                    // 這裡可以加入跳轉到其他頁面的邏輯，例如：window.location.href = 'dashboard.html';
+                    // 登入成功後跳轉到 input.html
+                    window.location.href = 'input.html';
                 } else {
                     messageElement.innerText = '登入失敗：' + data.message;
                     messageElement.style.color = 'red';
@@ -81,6 +82,6 @@
             });
         });
     </script>
-
+    
 </body>
 </html>
