@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>課程推薦系統</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <header>
+        <h1>課程推薦系統</h1>
+    </header>
+
+    <main>
+        <div class="content">
+            <section class="intro">
+                <h2>歡迎來到智慧課程推薦系統！</h2>
+                我們的系統結合了MBTI性格分析與CEEC興趣測驗，為你提供個性化的課程推薦，幫助你輕鬆找到最符合你興趣與職涯目標的課程。
+                <p>為什麼使用我們的系統？</p>
+                <p>減輕選課壓力：不再需要在眾多課程中徘徊，我們會根據你的性格與興趣為你推薦最佳課程。</p>
+                <p>提升學習效率：選擇最適合你的課程，讓你在學業上更輕鬆成功。</p>
+                <p>個性化推薦：結合你的測驗結果，專為你量身打造的課程選單。</p>
+                <p>馬上登入，開始探索屬於你的學習之路！</p>
+            </section>
+
+            <section class="login-form">
+                <h2>使用者登入</h2>
+                <!-- Form with id for JavaScript targeting -->
+                <form id="loginForm">
+                    <input type="text" id="username" placeholder="帳號" required>
+                    <input type="password" id="password" placeholder="密碼" required>
+                    <button type="submit">登入</button>
+                </form>
+                <p id="message"></p> <!-- 顯示訊息的元素 -->
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 識鑑課</p>
+    </footer>
+
+    <!-- JavaScript to handle form submission -->
+    <script>
+        // 監聽表單提交事件
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // 防止表單自動提交並刷新頁面
+
+            // 獲取使用者輸入的帳號和密碼
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // 使用 Fetch API 向後端發送請求
+            fetch('http://localhost:3000/login', { // 替換成你的後端 URL
+                method: 'POST', // 使用 POST 方法發送資料
+                headers: {
+                    'Content-Type': 'application/json', // 設置請求頭，表示發送 JSON 格式的數據
+                },
+                body: JSON.stringify({ username, password }), // 將帳號和密碼轉成 JSON 格式並作為請求主體發送
+            })
+            .then(response => response.json()) // 將回應轉換為 JSON 格式
+            .then(data => {
+                // 根據後端的回應顯示相應的訊息
+                const messageElement = document.getElementById('message');
+                if (data.success) {
+                    messageElement.innerText = '登入成功！';
+                    messageElement.style.color = 'green';
+                    
+                    // 跳轉到 input.html
+                    window.location.href = 'input.html'; // 加入這一行
+                } else {
+                    messageElement.innerText = '登入失敗：' + data.message;
+                    messageElement.style.color = 'red';
+                }
+            })
+            .catch(error => {
+                // 如果發生錯誤，例如無法連接到伺服器
+                console.error('發生錯誤:', error);
+                const messageElement = document.getElementById('message');
+                messageElement.innerText = '登入過程中發生錯誤，請稍後再試。';
+                messageElement.style.color = 'red';
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+
+/* input.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* 其他CSS樣式... */
+
+
+header {
+    background-color: #e0e0e0;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: #333;
+}
+
+nav {
+    background-color: #d0d0d0;
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+}
+
+nav ul li {
+    display: inline-block;
+    margin: 0 1rem;
+}
+
+nav ul li a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+    color: #555;
+}
+
+.outer-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    width: 100%;
+    margin: 2rem auto;
+    gap: 20px;
+}
+
+.main-container {
+    flex-grow: 2; /* 讓中間區域自動調整大小 */
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.left-box, .right-box {
+    flex-basis: 18%; /* 設定左右區域的寬度為18%，給中間區域更多空間 */
+}
+
+.left-box {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.center-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.right-box {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex-basis: 18%; /* 設定右側的寬度 */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.mbti-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.mbti-option {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mbti-option:hover {
+    background-color: #f0f0f0;
+}
+
+.mbti-option.selected {
+    background-color: #4CAF50;
+    color: #fff;
+    border-color: #4CAF50;
+}
+
+.ceec-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ceec-item {
+    padding: 10px;
+    border-radius: 5px;
+    cursor: move;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* CEEC 類型顏色調整（變得更柔和）*/
+.ceec-item[data-type="R"] { background-color: #F4A3A3; }  /* 實用型 (R) */
+.ceec-item[data-type="I"] { background-color: #6AC9B9; }  /* 研究型 (I) */
+.ceec-item[data-type="A"] { background-color: #60A9C9; }  /* 藝術型 (A) */
+.ceec-item[data-type="S"] { background-color: #FFB79A; }  /* 社會型 (S) */
+.ceec-item[data-type="E"] { background-color: #92C7B7; }  /* 企業型 (E) */
+.ceec-item[data-type="C"] { background-color: #F1B84D; }  /* 事務型 (C) */
+
+/* Hover效果 */
+.ceec-item:hover {
+    background-color: #E0E0E0;
+}
+
+/* 增加陰影效果 */
+.ceec-item {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* 調整 MBTI 詳細顯示區域 */
+.mbti-detail {
+    position: absolute;
+    top: 0;
+    left: -325px;
+    width: 500px; /* 設定合理寬度 */
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    color: #333;
+    text-align: center;
+    display: none;
+}
+
+/* 調整圖片顯示大小 */
+.mbti-detail img {
+    width: 150px; /* 設定圖片大小 */
+    height: 150px;
+    margin-bottom: 15px;
+    border-radius: 50%;
+}
+
+.mbti-detail .mbti-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.right-box {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex-basis: 20%; /* 增加右側區域的寬度 */
+}
+
+.red-box {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    color: #333;
+    text-align: left;
+    height: 100%;
+    overflow-y: auto;
+    width: 250%; /* 讓紅色框占滿整個右側區域 */
+}
+
+.ceec-description {
+    margin-bottom: 15px;
+}
+
+.ceec-description h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.ceec-description p {
+    font-size: 1rem;
+    color: #666;
+}
+
+/* 排序列表樣式 */
+ul.sortable-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 排序項目樣式 */
+ul.sortable-list li {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    background-color: #f4f4f4;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover效果 */
+ul.sortable-list li:hover {
+    background-color: #e0e0e0;
+}
+
+/* 拖拉中的項目 */
+.sortable-ghost {
+    background-color: #ddd;
+}
+
+/* CEEC介紹區域樣式 */
+.ceec-description {
+    margin-bottom: 15px;
+}
+
+.ceec-description h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.ceec-description p {
+    font-size: 1rem;
+    color: #666;
+}
