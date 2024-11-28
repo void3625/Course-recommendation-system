@@ -1,0 +1,16 @@
+version: '3'
+services:
+  db:
+    image: postgres:14 # 使用官方 PostgreSQL 14 映像
+    container_name: course-recommendation-db
+    environment:
+      POSTGRES_USER: postgre        # 設置 PostgreSQL 用戶名
+      POSTGRES_PASSWORD: 123 # 設置 PostgreSQL 密碼
+      POSTGRES_DB: usermanagement           # 設置初始資料庫名稱
+    ports:
+      - "5432:5432" # 將本地 5432 端口映射到容器中的 5432 端口
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # 持久化數據
+
+volumes:
+  postgres-data:
