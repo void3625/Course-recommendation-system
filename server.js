@@ -11,8 +11,6 @@ const app = express();
 const port = 3000;
 const session = require('express-session'); //啟詮的
 
-
-
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'postgres',        // 替換為您的 PostgreSQL 使用者名稱
@@ -20,7 +18,6 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'usermanagement',
   port: process.env.DB_PORT || 5432,
 });
-
 
 // 使用中間件
 app.use(cors()); // 允許跨域請求
@@ -53,8 +50,6 @@ app.post('/api/data', isAuthenticated, (req, res) => {
   });
 });
 
-
-
 // 提供靜態資源
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -70,7 +65,6 @@ app.get('/api/users/getUserId', (req, res) => {
       res.status(401).json({ error: '尚未登入' });
   }
 });
-
 
 // 使用用戶路由
 app.use('/api/users', userRoutes);
@@ -97,8 +91,19 @@ app.post('/save-user-data', async (req, res) => {
   }
 });
 
+// 新增：获取课程数据的 API 接口
+app.get('/api/courses', (req, res) => {
+  pool.query('SELECT * FROM public.courses', (err, result) => {
+    if (err) {
+      console.error('Error fetching courses:', err);
+      res.status(500).json({ error: 'Error fetching courses' });
+    } else {
+      res.json(result.rows);
+    }
+  });
+});
+
 // 啟動伺服器
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所有課程</title>
+    <link rel="stylesheet" href="recommend.css">
+    <script>
+        function showCategory(category) {
+            const sections = document.querySelectorAll('.course-category');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(category).style.display = 'block';
+        }
+
+        // 页面加载时获取课程数据
+        document.addEventListener('DOMContentLoaded', fetchCourses);
+
+        async function fetchCourses() {
+            try {
+                const response = await fetch('/api/courses');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const courses = await response.json();
+                displayCourses(courses);
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+            }
+        }
+
+        function displayCourses(courses) {
+            const categories = {
+                'sky': document.getElementById('sky'),
+                'people': document.getElementById('people'),
+                'thing': document.getElementById('thing'),
+                'self': document.getElementById('self')
+            };
+
+            // 清空现有课程内容，但保留标题
+            for (const category in categories) {
+                const categoryDiv = categories[category];
+                categoryDiv.innerHTML = '<h2>' + getCategoryName(category) + '</h2>';
+            }
+
+            courses.forEach(course => {
+                const category = course.category; // 确保数据库中的 category 字段值为 'sky', 'people', 'thing', 'self' 之一
+                const categoryDiv = categories[category];
+                if (categoryDiv) {
+                    const courseItem = document.createElement('div');
+                    courseItem.className = 'recommendation-item';
+
+                    const courseTitle = document.createElement('h2');
+                    courseTitle.textContent = course.course_name;
+
+                    const courseDescription = document.createElement('p');
+                    courseDescription.textContent = 'MBTI類型: ' + course.MBTI_type + ', CEEC類型: ' + course.CEEC_type;
+
+                    const courseLink = document.createElement('a');
+                    courseLink.href = course.link;
+                    courseLink.textContent = '查看課程';
+
+                    courseItem.appendChild(courseTitle);
+                    courseItem.appendChild(courseDescription);
+                    courseItem.appendChild(courseLink);
+
+                    categoryDiv.appendChild(courseItem);
+                }
+            });
+        }
+
+        function getCategoryName(category) {
+            switch (category) {
+                case 'sky':
+                    return '天';
+                case 'people':
+                    return '人';
+                case 'thing':
+                    return '物';
+                case 'self':
+                    return '我';
+                default:
+                    return '';
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>所有課程</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="input.html">MBTI與CEEC輸入</a></li>
+            <li><a href="recommend.html">推薦結果</a></li>
+            <li><a href="course.html">全部課程查詢</a></li>
+            <li><a href="QA.html">常見Q&A</a></li>
+            <li><a href="personal.html">個人資料與使用紀錄</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>分類課程</h1>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showCategory('sky')">天</a></li>
+                <li><a href="#" onclick="showCategory('people')">人</a></li>
+                <li><a href="#" onclick="showCategory('thing')">物</a></li>
+                <li><a href="#" onclick="showCategory('self')">我</a></li>
+            </ul>
+        </nav>
+
+        <div id="sky" class="course-category">
+            <h2>天</h2>
+            <!-- 课程内容将动态插入这里 -->
+        </div>
+
+        <div id="people" class="course-category" style="display: none;">
+            <h2>人</h2>
+            <!-- 课程内容将动态插入这里 -->
+        </div>
+
+        <div id="thing" class="course-category" style="display: none;">
+            <h2>物</h2>
+            <!-- 课程内容将动态插入这里 -->
+        </div>
+
+        <div id="self" class="course-category" style="display: none;">
+            <h2>我</h2>
+            <!-- 课程内容将动态插入这里 -->
+        </div>
+    </div>
+</body>
+</html>
