@@ -44,8 +44,8 @@ def calculate_matching_score(user_mbti, user_ceec, course_df):
     # 為課程計算 MBTI 和 CEEC 匹配分數
     course_df['matching_score'] = course_df.apply(
         lambda row: (
-            0.6 * (1 if row['最相似的MBTI類型'].startswith(user_mbti) else row['相似度']) +
-            0.4 * (1 if row['最相似的CEEC類型'] == user_ceec else row['相似度'])
+            0.5 * (1 if row['最相似的MBTI類型'].startswith(user_mbti) else row['相似度']) +
+            0.5 * (1 if row['最相似的CEEC類型'] == user_ceec else row['相似度'])
         ), axis=1
     )
     return course_df
