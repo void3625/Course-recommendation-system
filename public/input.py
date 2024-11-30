@@ -1,4 +1,9 @@
 # 假設您使用 Flask 或類似的後端框架
+from flask import Flask, request, jsonify
+
+# 創建 Flask 應用程序的實例
+app = Flask(__name__)
+
 @app.route('/save-user-data', methods=['POST'])
 def save_user_data():
     data = request.json
