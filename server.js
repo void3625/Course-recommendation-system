@@ -39,15 +39,6 @@ app.post('/api/data', isAuthenticated, (req, res) => {
   const userId = req.session.user.id; // 獲取當前登入用戶的 ID
   const { inputContent } = req.body;
 
-  // 儲存用戶輸入內容到資料庫
-  pool.query('INSERT INTO "user_inputs" (user_id, content) VALUES ($1, $2)', [userId, inputContent], (err) => {
-      if (err) {
-          console.error('資料庫錯誤:', err);
-          res.status(500).json({ success: false, message: '伺服器錯誤' });
-      } else {
-          res.json({ success: true, message: '內容已儲存' });
-      }
-  });
 });
 
 // 提供靜態資源
@@ -91,7 +82,7 @@ app.post('/save-user-data', async (req, res) => {
   }
 });
 
-// 新增：获取课程数据的 API 接口
+// 新增：獲取課程數據的API接口
 app.get('/api/courses', (req, res) => {
   pool.query('SELECT * FROM public.courses', (err, result) => {
     if (err) {
@@ -102,6 +93,24 @@ app.get('/api/courses', (req, res) => {
     }
   });
 });
+
+// 儲存收藏課程API
+app.post('/api/courses/collect', isAuthenticated, async (req, res) => {
+  const { course_name, MBTI_type, CEEC_type, link, category } = req.body;
+
+  try {
+      const result = await pool.query(
+          `INSERT INTO collection (course_name, MBTI_type, CEEC_type, link, category) 
+           VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+          [course_name, MBTI_type, CEEC_type, link, category]
+      );
+      res.status(200).json({ message: '課程已收藏', collection: result.rows[0] });
+  } catch (error) {
+      console.error('收藏課程錯誤:', error);
+      res.status(500).json({ error: '儲存收藏時發生錯誤' });
+  }
+});
+
 
 // 啟動伺服器
 app.listen(port, () => {
