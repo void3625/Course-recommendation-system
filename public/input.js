@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (userData.user_id) {
         const userId = userData.user_id;  // 取得登入用戶的 ID
         console.log('Logged in user ID:', userId);
+        
+        // 保存 user_id 到 localStorage 以便在其他頁面中使用
+        localStorage.setItem('user_id', userId);
 
         const mbtiTypes = [
             'ISTJ - 檢查者', 'ISFJ - 守護者', 'INFJ - 提倡者', 'INTJ - 建築師',
@@ -48,8 +51,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         // 使用 Sortable.js 初始化拖拉排序功能
         new Sortable(document.getElementById('ceec-order'), {
-            animation: 150,  // 設定拖拉動畫的速度
-            ghostClass: 'sortable-ghost',  // 拖拉中的項目的特殊樣式
+            animation: 150,
+            ghostClass: 'sortable-ghost',
             onEnd: function(evt) {
                 const sortedItems = Array.from(evt.from.children).map(item => item.dataset.type);
                 console.log('排序完成:', sortedItems);
@@ -59,10 +62,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         // 提交表單並儲存到資料庫
         document.getElementById('input-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-        
+
             const mbti = document.getElementById('mbti').value;
             const ceecOrder = Array.from(document.querySelectorAll('.ceec-item')).map(item => item.dataset.type);
-            
+
             try {
                 const response = await fetch('http://localhost:3000/save-user-data', {
                     method: 'POST',
@@ -74,6 +77,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
                 if (response.ok) {
                     alert("資料已成功儲存！");
+                    window.location.href = 'recommend.html';
                 } else {
                     alert("儲存失敗：" + (result.error || "請再試一次。"));
                 }
