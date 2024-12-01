@@ -17,7 +17,7 @@ const session = require('express-session'); //啟詮的
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'postgres',        // 替換為您的 PostgreSQL 使用者名稱
-  password: process.env.DB_PASSWORD || '1234', // 替換為您的 PostgreSQL 密碼
+  password: process.env.DB_PASSWORD || '123', // 替換為您的 PostgreSQL 密碼
   database: process.env.DB_NAME || 'usermanagement',
   port: process.env.DB_PORT || 5432,
 });

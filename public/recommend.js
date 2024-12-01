@@ -1,27 +1,38 @@
 document.addEventListener('DOMContentLoaded', function() {
     const recommendationList = document.querySelector('.recommendation-list');
+    console.log("Recommend page loaded, fetching recommendations...");
 
-    // 假設這裡會有用戶的 MBTI 和 CEEC 數據，你需要從 URL 或者 localStorage 中獲取這些數據
+    // 從 localStorage 中獲取 user_id
+    const user_id = localStorage.getItem('user_id');
+
+    if (!user_id) {
+        console.warn('User ID not found in localStorage. Unable to fetch recommendations.');
+        recommendationList.innerHTML = `
+            <div class="recommendation-item">
+                <h2>無法獲取推薦</h2>
+                <p>無法找到 user_id，請確認您已經登入並且有有效的用戶資料。</p>
+            </div>
+        `;
+        return;
+    }
+
     const userData = {
-        user_index: 0,  // 假設你有用戶索引
-        user_mbti: "INTJ",  // 用戶的 MBTI 類型
-        user_ceec: "SE"  // 用戶的 CEEC 類型
+        user_id: user_id
     };
 
     // 發送請求到 Flask API 以獲取推薦結果
-    fetch('http://127.0.0.1:5000/api/recommend', {
+    fetch('http://localhost:5000/api/recommend', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
+        mode: 'cors'
     })
     .then(response => response.json())
     .then(data => {
-        // 清空現有的推薦列表（如果有）
         recommendationList.innerHTML = '';
 
-        // 檢查 API 是否返回了推薦結果
         if (data.recommended_courses && data.recommended_courses.length > 0) {
             data.recommended_courses.forEach((recommendation, index) => {
                 const item = document.createElement('div');
@@ -33,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 recommendationList.appendChild(item);
             });
         } else {
-            // 如果沒有推薦結果，顯示提示
             const noResultItem = document.createElement('div');
             noResultItem.classList.add('recommendation-item');
             noResultItem.innerHTML = `
