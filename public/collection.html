@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>所有課程</title>
-    <link rel="stylesheet" href="recommend.css">
+    <title>收藏課程</title>
+    <link rel="stylesheet" href="recommend.css"> <!-- 改為與 course.html 相同 -->
     <script>
+        function showCategory(category) {
+            const sections = document.querySelectorAll('.course-category');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(category).style.display = 'block';
+        }
+
         document.addEventListener('DOMContentLoaded', fetchFavorites);
 
-        // 獲取收藏課程
         async function fetchFavorites() {
             try {
                 const response = await fetch('/api/courses/favorites');
@@ -22,7 +29,6 @@
             }
         }
 
-        // 顯示收藏課程
         function displayFavorites(favorites) {
             const categories = {
                 'sky': document.getElementById('sky'),
@@ -31,7 +37,6 @@
                 'self': document.getElementById('self')
             };
 
-            // 清空現有內容
             for (const category in categories) {
                 const categoryDiv = categories[category];
                 categoryDiv.innerHTML = '<h2>' + getCategoryName(category) + '</h2>';
@@ -48,7 +53,7 @@
                     title.textContent = favorite.course_name;
 
                     const description = document.createElement('p');
-                    description.textContent = `MBTI類型: ${favorite.mbti_type}\nCEEC類型: ${favorite.ceec_type}`;
+                    description.textContent = `MBTI類型: ${favorite.mbti_type} | CEEC類型: ${favorite.ceec_type}`;
 
                     const link = document.createElement('a');
                     link.href = favorite.link;
@@ -64,7 +69,7 @@
 
                             if (response.ok) {
                                 alert('收藏已刪除！');
-                                fetchFavorites(); // 刷新收藏列表
+                                fetchFavorites();
                             } else {
                                 alert('刪除失敗，請稍後再試。');
                             }
@@ -102,9 +107,8 @@
 </head>
 <body>
     <header>
-        <h1>所有課程</h1>
+        <h1>我的收藏課程</h1>
     </header>
-
     <nav>
         <ul>
             <li><a href="input.html">MBTI與CEEC輸入</a></li>
@@ -115,7 +119,6 @@
             <li><a href="personal.html">個人資料與使用紀錄</a></li>
         </ul>
     </nav>
-
     <div class="container">
         <h1>分類課程</h1>
         <nav>
@@ -129,22 +132,18 @@
 
         <div id="sky" class="course-category">
             <h2>天</h2>
-            <!-- 課程動態 -->
         </div>
 
         <div id="people" class="course-category" style="display: none;">
             <h2>人</h2>
-            <!-- 課程動態 -->
         </div>
 
         <div id="thing" class="course-category" style="display: none;">
             <h2>物</h2>
-            <!-- 課程動態 -->
         </div>
 
         <div id="self" class="course-category" style="display: none;">
             <h2>我</h2>
-            <!-- 課程動態 -->
         </div>
     </div>
 </body>
