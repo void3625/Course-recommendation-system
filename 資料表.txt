@@ -25,6 +25,6 @@ CREATE TABLE users (
     ID SERIAL PRIMARY KEY NOT NULL,
     username TEXT NOT NULL,
     password TEXT NOT NULL,
-    mbti TEXT ,
-    ceec TEXT 
+    MBTI TEXT ,
+    CEEC TEXT 
 );
