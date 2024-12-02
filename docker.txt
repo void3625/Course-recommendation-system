@@ -15,3 +15,6 @@ docker exec -it course-recommendation-db psql -U postgre -d usermanagement
 
 啟動
 nodemon server.js
+
+裝包啊
+pip install -r requirements.txt
