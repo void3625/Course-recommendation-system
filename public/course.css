@@ -35,3 +35,25 @@ nav ul li a:hover {
     color: #007bff;
     margin-bottom: 15px;
 }
+
+
+.favorite-button {
+    font-size: 24px; /* 控制愛心大小 */
+    color: gray; /* 空心時的顏色 */
+    cursor: pointer;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+.favorite-button.favorited {
+    color: red; /* 實心愛心時的顏色 */
+}
+
+.favorite-button::before {
+    content: '\2661'; /* 空心愛心符號 */
+}
+
+.favorite-button.favorited::before {
+    content: '\2665'; /* 實心愛心符號 */
+}

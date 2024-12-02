@@ -46,14 +46,18 @@ function displayCourses(courses) {
             courseTitle.textContent = course.course_name;
 
             const courseDescription = document.createElement('p');
-            courseDescription.textContent = 'MBTI類型: ' + course.MBTI_type + '\nCEEC類型: ' + course.CEEC_type;
+            courseDescription.textContent = `MBTI類型: ${course.MBTI_type} | CEEC類型: ${course.CEEC_type}`;
 
             const courseLink = document.createElement('a');
             courseLink.href = course.link;
             courseLink.textContent = '查看課程';
 
             const favoriteButton = document.createElement('button');
-            favoriteButton.textContent = '收藏課程';
+            favoriteButton.className = 'favorite-button';
+            if (course.is_favorited) {
+                favoriteButton.classList.add('favorited'); // 已收藏則顯示紅色愛心
+            }
+
             favoriteButton.onclick = async () => {
                 try {
                     const response = await fetch('/api/courses/collect', {
@@ -71,7 +75,10 @@ function displayCourses(courses) {
                     });
 
                     if (response.ok) {
+                        favoriteButton.classList.add('favorited'); // 點擊後變為紅色愛心
                         alert('課程已收藏！');
+                    } else if (response.status === 409) {
+                        alert('該課程已經在收藏中！');
                     } else {
                         alert('收藏失敗，請稍後再試。');
                     }
@@ -81,16 +88,16 @@ function displayCourses(courses) {
                 }
             };
 
+            courseItem.appendChild(courseTitle);
+            courseItem.appendChild(courseDescription);
+            courseItem.appendChild(courseLink);
+            courseItem.appendChild(favoriteButton);
 
-    courseItem.appendChild(courseTitle);
-    courseItem.appendChild(courseDescription);
-    courseItem.appendChild(courseLink);
-    courseItem.appendChild(favoriteButton);
+            categoryDiv.appendChild(courseItem);
+        }
+    });
+}
 
-    categoryDiv.appendChild(courseItem);
-}
-});
-}
 
 
 function getCategoryName(category) {

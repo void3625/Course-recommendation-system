@@ -84,23 +84,51 @@ app.post('/save-user-data', async (req, res) => {
 });
 
 // 新增：獲取課程數據的API接口
-app.get('/api/courses', (req, res) => {
-  pool.query('SELECT * FROM public.courses', (err, result) => {
-    if (err) {
-      console.error('Error fetching courses:', err);
+// 獲取課程數據並檢查是否收藏
+app.get('/api/courses', isAuthenticated, async (req, res) => {
+  const userId = req.session.user.id;
+
+  try {
+      const courses = await pool.query('SELECT * FROM public.courses');
+      const favorites = await pool.query(
+          'SELECT course_name FROM collection WHERE user_id = $1',
+          [userId]
+      );
+
+      const favoriteNames = favorites.rows.map(fav => fav.course_name);
+
+      // 在每個課程中新增 is_favorited 屬性
+      const coursesWithFavorites = courses.rows.map(course => ({
+          ...course,
+          is_favorited: favoriteNames.includes(course.course_name),
+      }));
+
+      res.json(coursesWithFavorites);
+  } catch (error) {
+      console.error('Error fetching courses with favorites:', error);
       res.status(500).json({ error: 'Error fetching courses' });
-    } else {
-      res.json(result.rows);
-    }
-  });
+  }
 });
 
+
+// 儲存收藏課程API
 // 儲存收藏課程API
 app.post('/api/courses/collect', isAuthenticated, async (req, res) => {
   const userId = req.session.user.id; // 獲取當前登入用戶的 ID
   const { course_name, MBTI_type, CEEC_type, link, category } = req.body;
 
   try {
+      // 檢查是否已存在相同收藏
+      const existing = await pool.query(
+          `SELECT * FROM collection WHERE user_id = $1 AND course_name = $2 AND MBTI_type = $3 AND CEEC_type = $4 AND link = $5 AND category = $6`,
+          [userId, course_name, MBTI_type, CEEC_type, link, category]
+      );
+
+      if (existing.rows.length > 0) {
+          return res.status(409).json({ message: '該課程已收藏' });
+      }
+
+      // 如果不存在，則新增收藏
       const result = await pool.query(
           `INSERT INTO collection (course_name, MBTI_type, CEEC_type, link, category, user_id) 
            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
@@ -112,6 +140,7 @@ app.post('/api/courses/collect', isAuthenticated, async (req, res) => {
       res.status(500).json({ error: '儲存收藏時發生錯誤' });
   }
 });
+
 
 // 獲取當前使用者的收藏課程
 app.get('/api/courses/favorites', isAuthenticated, async (req, res) => {
