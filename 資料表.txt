@@ -1,0 +1,30 @@
+// 全部課程
+CREATE TABLE courses (
+    ID SERIAL PRIMARY KEY NOT NULL,
+    course_name TEXT NOT NULL,
+    MBTI_type TEXT NOT NULL,
+    CEEC_type TEXT NOT NULL,
+    link TEXT NOT NULL,
+    category TEXT NOT NULL
+);
+
+// 收藏課程
+CREATE TABLE collection (
+    ID SERIAL PRIMARY KEY NOT NULL,
+    course_name TEXT NOT NULL,
+    MBTI_type TEXT NOT NULL,
+    CEEC_type TEXT NOT NULL,
+    link TEXT NOT NULL,
+    category TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+// 使用者資料
+CREATE TABLE users (
+    ID SERIAL PRIMARY KEY NOT NULL,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL,
+    mbti TEXT ,
+    ceec TEXT 
+);
