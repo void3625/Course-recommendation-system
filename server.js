@@ -111,35 +111,39 @@ app.get('/api/courses', isAuthenticated, async (req, res) => {
 });
 
 
-// 儲存收藏課程API
+
 // 儲存收藏課程API
 app.post('/api/courses/collect', isAuthenticated, async (req, res) => {
-  const userId = req.session.user.id; // 獲取當前登入用戶的 ID
+  const userId = req.session.user.id;
   const { course_name, MBTI_type, CEEC_type, link, category } = req.body;
 
   try {
-      // 檢查是否已存在相同收藏
+      // 檢查是否已存在收藏
       const existing = await pool.query(
-          `SELECT * FROM collection WHERE user_id = $1 AND course_name = $2 AND MBTI_type = $3 AND CEEC_type = $4 AND link = $5 AND category = $6`,
-          [userId, course_name, MBTI_type, CEEC_type, link, category]
+          `SELECT * FROM collection 
+           WHERE user_id = $1 AND course_name = $2`,
+          [userId, course_name]
       );
 
       if (existing.rows.length > 0) {
-          return res.status(409).json({ message: '該課程已收藏' });
+          return res.status(409).json({ message: '課程已收藏' });
       }
 
-      // 如果不存在，則新增收藏
+      // 插入新的收藏記錄
       const result = await pool.query(
           `INSERT INTO collection (course_name, MBTI_type, CEEC_type, link, category, user_id) 
            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
           [course_name, MBTI_type, CEEC_type, link, category, userId]
       );
-      res.status(200).json({ message: '課程已收藏', collection: result.rows[0] });
+
+      res.status(200).json({ message: '收藏成功', collection: result.rows[0] });
   } catch (error) {
       console.error('收藏課程錯誤:', error);
       res.status(500).json({ error: '儲存收藏時發生錯誤' });
   }
 });
+
+
 
 
 // 獲取當前使用者的收藏課程

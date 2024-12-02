@@ -18,3 +18,11 @@
 .favorite-button.favorited::before {
     content: '\2665'; /* 實心愛心符號 */
 }
+
+.favorite-button.temp-unfavorited {
+    content: '\2661'; /* 空心愛心符號 */
+}
+
+.favorite-button.temp-unfavorited::before {
+    content: '\2661'; /* 空心愛心符號 */
+}
