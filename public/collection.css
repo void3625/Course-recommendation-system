@@ -1,0 +1,37 @@
+/* 修改分類選項的樣式 */
+nav ul {
+    display: flex;
+    justify-content: space-around; /* 平均分配 */
+    margin: 1rem 0;
+    padding: 0;
+}
+
+nav ul li {
+    flex: 1; /* 每個選項均分寬度 */
+    text-align: center; /* 居中顯示文字 */
+}
+
+nav ul li a {
+    display: block;
+    padding: 10px 20px;
+    font-size: 2rem; /* 調整字體大小，與標題一致 */
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav ul li a:hover {
+    background-color: #007bff;
+    color: #fff; /* 鼠標懸停效果 */
+}
+
+/* 中心對齊分類的 h2 標題 */
+.course-category h2 {
+    text-align: center; /* 水平居中 */
+    font-size: 1.8rem; /* 顯著的字體大小 */
+    color: #007bff;
+    margin-bottom: 15px;
+}

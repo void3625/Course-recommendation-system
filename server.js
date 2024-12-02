@@ -97,18 +97,57 @@ app.get('/api/courses', (req, res) => {
 
 // 儲存收藏課程API
 app.post('/api/courses/collect', isAuthenticated, async (req, res) => {
+  const userId = req.session.user.id; // 獲取當前登入用戶的 ID
   const { course_name, MBTI_type, CEEC_type, link, category } = req.body;
 
   try {
       const result = await pool.query(
-          `INSERT INTO collection (course_name, MBTI_type, CEEC_type, link, category) 
-           VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-          [course_name, MBTI_type, CEEC_type, link, category]
+          `INSERT INTO collection (course_name, MBTI_type, CEEC_type, link, category, user_id) 
+           VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+          [course_name, MBTI_type, CEEC_type, link, category, userId]
       );
       res.status(200).json({ message: '課程已收藏', collection: result.rows[0] });
   } catch (error) {
       console.error('收藏課程錯誤:', error);
       res.status(500).json({ error: '儲存收藏時發生錯誤' });
+  }
+});
+
+// 獲取當前使用者的收藏課程
+app.get('/api/courses/favorites', isAuthenticated, async (req, res) => {
+  const userId = req.session.user.id;
+
+  try {
+      const result = await pool.query(
+          'SELECT * FROM collection WHERE user_id = $1',
+          [userId]
+      );
+      res.status(200).json(result.rows);
+  } catch (error) {
+      console.error('獲取收藏課程錯誤:', error);
+      res.status(500).json({ error: '獲取收藏課程時發生錯誤' });
+  }
+});
+
+// 刪除收藏的課程
+app.delete('/api/courses/favorites/:id', isAuthenticated, async (req, res) => {
+  const userId = req.session.user.id;
+  const { id } = req.params;
+
+  try {
+      const result = await pool.query(
+          'DELETE FROM collection WHERE id = $1 AND user_id = $2',
+          [id, userId]
+      );
+
+      if (result.rowCount > 0) {
+          res.status(200).json({ message: '收藏已刪除' });
+      } else {
+          res.status(404).json({ error: '未找到對應的收藏或無權限刪除' });
+      }
+  } catch (error) {
+      console.error('刪除收藏課程錯誤:', error);
+      res.status(500).json({ error: '刪除收藏課程時發生錯誤' });
   }
 });
 
