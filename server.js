@@ -83,65 +83,73 @@ app.post('/save-user-data', async (req, res) => {
   }
 });
 
-// 新增：獲取課程數據的API接口
+
 // 獲取課程數據並檢查是否收藏
 app.get('/api/courses', isAuthenticated, async (req, res) => {
-  const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
-  try {
-      const courses = await pool.query('SELECT * FROM public.courses');
-      const favorites = await pool.query(
-          'SELECT course_name FROM collection WHERE user_id = $1',
-          [userId]
-      );
+    try {
+        const courses = await pool.query('SELECT * FROM public.courses');
+        const favorites = await pool.query(
+            'SELECT course_id FROM collection WHERE user_id = $1',
+            [userId]
+        );
 
-      const favoriteNames = favorites.rows.map(fav => fav.course_name);
+        const favoriteIds = favorites.rows.map(fav => fav.course_id);
 
-      // 在每個課程中新增 is_favorited 屬性
-      const coursesWithFavorites = courses.rows.map(course => ({
-          ...course,
-          is_favorited: favoriteNames.includes(course.course_name),
-      }));
+        // 在每個課程中新增 is_favorited 屬性
+        const coursesWithFavorites = courses.rows.map(course => ({
+            ...course,
+            is_favorited: favoriteIds.includes(course.id),
+        }));
 
-      res.json(coursesWithFavorites);
-  } catch (error) {
-      console.error('Error fetching courses with favorites:', error);
-      res.status(500).json({ error: 'Error fetching courses' });
-  }
+        res.json(coursesWithFavorites);
+    } catch (error) {
+        console.error('Error fetching courses with favorites:', error);
+        res.status(500).json({ error: 'Error fetching courses' });
+    }
 });
+
 
 
 
 // 儲存收藏課程API
 app.post('/api/courses/collect', isAuthenticated, async (req, res) => {
-  const userId = req.session.user.id;
-  const { course_name, MBTI_type, CEEC_type, link, category } = req.body;
+    const userId = req.session.user.id;
+    const { course_id, course_name, MBTI_type, CEEC_type, link, category } = req.body;
 
-  try {
-      // 檢查是否已存在收藏
-      const existing = await pool.query(
-          `SELECT * FROM collection 
-           WHERE user_id = $1 AND course_name = $2`,
-          [userId, course_name]
-      );
+    // 檢查 course_name 是否存在
+    if (!course_name) {
+        return res.status(400).json({ error: '缺少課程名稱，無法收藏課程' });
+    }
 
-      if (existing.rows.length > 0) {
-          return res.status(409).json({ message: '課程已收藏' });
-      }
+    try {
+        // 檢查是否已存在收藏
+        const existing = await pool.query(
+            `SELECT * FROM collection WHERE user_id = $1 AND course_id = $2`,
+            [userId, course_id]
+        );
 
-      // 插入新的收藏記錄
-      const result = await pool.query(
-          `INSERT INTO collection (course_name, MBTI_type, CEEC_type, link, category, user_id) 
-           VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-          [course_name, MBTI_type, CEEC_type, link, category, userId]
-      );
+        if (existing.rows.length > 0) {
+            return res.status(409).json({ message: '課程已收藏' });
+        }
 
-      res.status(200).json({ message: '收藏成功', collection: result.rows[0] });
-  } catch (error) {
-      console.error('收藏課程錯誤:', error);
-      res.status(500).json({ error: '儲存收藏時發生錯誤' });
-  }
+        // 插入新的收藏記錄
+        const result = await pool.query(
+            `INSERT INTO collection (course_id, course_name, MBTI_type, CEEC_type, link, category, user_id) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+            [course_id, course_name, MBTI_type, CEEC_type, link, category, userId]
+        );
+
+        res.status(200).json({ message: '收藏成功', collection: result.rows[0] });
+    } catch (error) {
+        console.error('收藏課程錯誤:', error);
+        res.status(500).json({ error: '儲存收藏時發生錯誤' });
+    }
 });
+
+
+
 
 
 
@@ -163,26 +171,27 @@ app.get('/api/courses/favorites', isAuthenticated, async (req, res) => {
 });
 
 // 刪除收藏的課程
-app.delete('/api/courses/favorites/:id', isAuthenticated, async (req, res) => {
-  const userId = req.session.user.id;
-  const { id } = req.params;
+app.delete('/api/courses/favorites/:course_id', isAuthenticated, async (req, res) => {
+    const userId = req.session.user.id;
+    const { course_id } = req.params;
 
-  try {
-      const result = await pool.query(
-          'DELETE FROM collection WHERE id = $1 AND user_id = $2',
-          [id, userId]
-      );
+    try {
+        const result = await pool.query(
+            'DELETE FROM collection WHERE course_id = $1 AND user_id = $2',
+            [course_id, userId]
+        );
 
-      if (result.rowCount > 0) {
-          res.status(200).json({ message: '收藏已刪除' });
-      } else {
-          res.status(404).json({ error: '未找到對應的收藏或無權限刪除' });
-      }
-  } catch (error) {
-      console.error('刪除收藏課程錯誤:', error);
-      res.status(500).json({ error: '刪除收藏課程時發生錯誤' });
-  }
+        if (result.rowCount > 0) {
+            res.status(200).json({ message: '收藏已刪除' });
+        } else {
+            res.status(404).json({ error: '未找到對應的收藏或無權限刪除' });
+        }
+    } catch (error) {
+        console.error('刪除收藏課程錯誤:', error);
+        res.status(500).json({ error: '刪除收藏課程時發生錯誤' });
+    }
 });
+
 
 
 // 啟動伺服器

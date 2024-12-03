@@ -55,25 +55,26 @@ function displayFavorites(favorites) {
             const favoriteButton = document.createElement('button');
             favoriteButton.className = 'favorite-button favorited'; // 預設為已收藏（紅色實心）
 
-            favoriteButton.onclick = async () => {
-                if (favoriteButton.classList.contains('favorited')) {
-                    // 刪除收藏
-                    try {
-                        const response = await fetch(`/api/courses/favorites/${favorite.id}`, {
-                            method: 'DELETE',
-                        });
-            
-                        if (response.ok) {
-                            alert('收藏已刪除！');
-                            favoriteButton.classList.remove('favorited');
-                            favoriteButton.classList.add('temp-unfavorited'); // 暫時未收藏狀態
-                        } else {
-                            alert('刪除失敗，請稍後再試。');
-                        }
-                    } catch (error) {
-                        console.error('刪除錯誤:', error);
-                        alert('發生錯誤，請稍後再試。');
+           // 刪除收藏的按鈕邏輯
+           favoriteButton.onclick = async () => {
+            if (favoriteButton.classList.contains('favorited')) {
+                // 刪除收藏
+                try {
+                    const response = await fetch(`/api/courses/favorites/${favorite.course_id}`, {
+                        method: 'DELETE',
+                    });
+        
+                    if (response.ok) {
+                        alert('收藏已刪除！');
+                        favoriteButton.classList.remove('favorited');
+                        favoriteButton.classList.add('temp-unfavorited'); // 暫時未收藏狀態
+                    } else {
+                        alert('刪除失敗，請稍後再試。');
                     }
+                } catch (error) {
+                    console.error('刪除錯誤:', error);
+                    alert('發生錯誤，請稍後再試。');
+                }
                 } else if (favoriteButton.classList.contains('temp-unfavorited')) {
                     // 重新收藏
                     try {
@@ -83,6 +84,7 @@ function displayFavorites(favorites) {
                                 'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({
+                                course_id: favorite.course_id, // 使用 course_id 而不是 id
                                 course_name: favorite.course_name,
                                 MBTI_type: favorite.mbti_type,
                                 CEEC_type: favorite.ceec_type,
@@ -96,7 +98,7 @@ function displayFavorites(favorites) {
                             alert('收藏已恢復！');
             
                             // 更新收藏 ID
-                            favorite.id = result.collection.id;
+                            favorite.course_id = result.collection.course_id; // 更新為 course_id
             
                             favoriteButton.classList.add('favorited');
                             favoriteButton.classList.remove('temp-unfavorited');
@@ -109,6 +111,8 @@ function displayFavorites(favorites) {
                     }
                 }
             };
+            
+
             
             favoriteItem.appendChild(title);
             favoriteItem.appendChild(description);

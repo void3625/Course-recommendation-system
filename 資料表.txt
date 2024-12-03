@@ -1,6 +1,6 @@
 // 全部課程
 CREATE TABLE courses (
-    ID SERIAL PRIMARY KEY NOT NULL,
+    id SERIAL PRIMARY KEY NOT NULL,
     course_name TEXT NOT NULL,
     MBTI_type TEXT NOT NULL,
     CEEC_type TEXT NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE courses (
 
 // 收藏課程
 CREATE TABLE collection (
-    ID SERIAL PRIMARY KEY NOT NULL,
+    course_id SERIAL PRIMARY KEY NOT NULL,
     course_name TEXT NOT NULL,
     MBTI_type TEXT NOT NULL,
     CEEC_type TEXT NOT NULL,

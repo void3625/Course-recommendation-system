@@ -59,6 +59,12 @@ function displayCourses(courses) {
             }
 
             favoriteButton.onclick = async () => {
+                if (!course.course_name) {
+                    alert('課程名稱錯誤，請稍後再試。');
+                    console.error('課程名稱不存在:', course);
+                    return;
+                }
+            
                 try {
                     const response = await fetch('/api/courses/collect', {
                         method: 'POST',
@@ -66,14 +72,15 @@ function displayCourses(courses) {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            course_name: course.course_name,
+                            course_id: course.id,
+                            course_name: course.course_name, // 傳遞課程名稱
                             MBTI_type: course.MBTI_type,
                             CEEC_type: course.CEEC_type,
                             link: course.link,
                             category: course.category
                         }),
                     });
-
+            
                     if (response.ok) {
                         favoriteButton.classList.add('favorited'); // 點擊後變為紅色愛心
                         alert('課程已收藏！');
@@ -87,6 +94,10 @@ function displayCourses(courses) {
                     alert('發生錯誤，請稍後再試。');
                 }
             };
+            
+            
+            
+            
 
             courseItem.appendChild(courseTitle);
             courseItem.appendChild(courseDescription);
