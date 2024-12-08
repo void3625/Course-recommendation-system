@@ -68,7 +68,7 @@ app.post('/save-user-data', async (req, res) => {
 
   try {
       const result = await pool.query(
-          'UPDATE public.users SET "MBTI" = $1, "CEEC" = $2 WHERE id = $3',
+          'UPDATE public.users SET "mbti" = $1, "ceec" = $2 WHERE id = $3',
           [mbti, ceecOrderString, user_id]
       );
       
@@ -192,7 +192,37 @@ app.delete('/api/courses/favorites/:course_id', isAuthenticated, async (req, res
     }
 });
 
+// 個人資料路由
+app.get('/api/user/personality', async (req, res) => {
+  // 確認用戶是否登入
+  if (!req.session.user) {
+      console.error('未檢測到會話或用戶資料');
+      return res.status(401).json({ error: '尚未登入' });
+  }
 
+  const userId = req.session.user.id;
+
+  try {
+      // 查詢 MBTI 和 CEEC
+      const result = await pool.query(
+          'SELECT "mbti", "ceec" FROM users WHERE id = $1',
+          [userId]
+      );
+
+      if (result.rows.length > 0) {
+          const { mbti, ceec } = result.rows[0];
+          res.json({
+              mbti: mbti || '未指定', // 添加預設值
+              ceec: ceec ? ceec.split(',') : [] // 確保返回空數組
+          });
+      } else {
+          res.status(404).json({ error: '用戶資料未找到' });
+      }
+  } catch (err) {
+      console.error('資料庫查詢錯誤:', err.message);
+      res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
 
 // 啟動伺服器
 app.listen(port, () => {

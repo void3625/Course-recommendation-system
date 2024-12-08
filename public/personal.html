@@ -65,5 +65,47 @@
     <footer>
         <p>&copy; 2023 學生選課推薦系統. 保留所有權利。</p>
     </footer>
+
+    <script>
+        async function loadPersonalityData() {
+            try {
+                const response = await fetch('/api/user/personality', {
+                    method: 'GET',
+                    credentials: 'include', // 確保攜帶會話 Cookie
+                });
+
+                if (!response.ok) {
+                    throw new Error('無法加載個人資料');
+                }
+
+                const data = await response.json();
+
+                // 更新 MBTI 顯示
+                const mbtiElement = document.getElementById('mbti-type');
+                mbtiElement.textContent = data.mbti || '未指定';
+
+                // 更新 CEEC 顯示
+                const ceecListElement = document.getElementById('ceec-list');
+                ceecListElement.innerHTML = ''; // 清空原有項目
+
+                if (data.ceec && data.ceec.length > 0) {
+                    data.ceec.forEach(type => {
+                        const li = document.createElement('li');
+                        li.textContent = type;
+                        ceecListElement.appendChild(li);
+                    });
+                } else {
+                    ceecListElement.textContent = '尚無 CEEC 資料';
+                }
+            } catch (error) {
+                console.error('加載個人資料時出錯:', error);
+                alert('無法加載個人資料，請稍後再試');
+            }
+        }
+
+        // 頁面載入時加載資料
+        document.addEventListener('DOMContentLoaded', loadPersonalityData);
+    </script>
+
 </body>
 </html>
