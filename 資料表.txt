@@ -12,8 +12,8 @@ CREATE TABLE courses (
 CREATE TABLE collection (
     course_id SERIAL PRIMARY KEY NOT NULL,
     course_name TEXT NOT NULL,
-    MBTI_type TEXT NOT NULL,
-    CEEC_type TEXT NOT NULL,
+    mbti_type TEXT NOT NULL,
+    ceec_type TEXT NOT NULL,
     link TEXT NOT NULL,
     category TEXT NOT NULL,
     user_id INTEGER NOT NULL,
