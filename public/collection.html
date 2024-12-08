@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收藏課程</title>
+    <link rel="stylesheet" href="collection.css"> 
+    <link rel="stylesheet" href="button.css"> <!-- 改為與 course.html 相同 -->
+    <script src="collection.js"></script>
+</head>
+<body>
+    <header>
+        <h1>識薦課</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="intro.html">什麼是MBTI與CEEC</a></li>
+            <li><a href="input.html">MBTI與CEEC輸入</a></li>
+            <li><a href="recommend.html">推薦結果</a></li>
+            <li><a href="course.html">全部課程查詢</a></li>
+            <li><a href="collection.html">收藏課程</a></li>
+            <li><a href="personal.html">個人資料與使用紀錄</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>分類課程</h1>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showCategory('sky')">天</a></li>
+                <li><a href="#" onclick="showCategory('people')">人</a></li>
+                <li><a href="#" onclick="showCategory('thing')">物</a></li>
+                <li><a href="#" onclick="showCategory('self')">我</a></li>
+            </ul>
+        </nav>
+
+        <div id="sky" class="course-category">
+            <h2>天</h2>
+        </div>
+
+        <div id="people" class="course-category" style="display: none;">
+            <h2>人</h2>
+        </div>
+
+        <div id="thing" class="course-category" style="display: none;">
+            <h2>物</h2>
+        </div>
+
+        <div id="self" class="course-category" style="display: none;">
+            <h2>我</h2>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 識薦課</p>
+    </footer>
+</body>
+</html>

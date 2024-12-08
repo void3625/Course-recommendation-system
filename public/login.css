@@ -1,28 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+/* 通用樣式 */
 body, html {
-    height: 100%;
     margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: #ffffff;
+    padding: 0;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: #f9f9f9;
     color: #333;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
 
+
+/* 頁首樣式 */
 header {
-    background-color: #f0f0f0;
-    padding: 20px 0;
+    background: #333;
+    color: #fff;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-    color: #4a4a4a;
+header h1 {
     margin: 0;
-    font-size: 2.5em;
+    font-size: 2rem;
 }
 
+/* 主要區域樣式 */
 main {
-    flex: 1;
+    flex: 1; /* 讓 main 區域自動填滿可用空間 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,31 +38,94 @@ main {
 
 .content {
     display: flex;
-    max-width: 1400px;  /* 增加最大寬度 */
+    max-width: 1400px;
     width: 100%;
-    gap: 40px;  /* 增加間距 */
+    gap: 40px;
 }
 
-.intro, .login-form {
-    flex: 1;
-    padding: 50px;  /* 增加內邊距 */
-    background: #ffffff;  /* 改為白色背景 */
-    border-radius: 20px;  /* 增加圓角 */
-    margin: 0;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);  /* 增強陰影效果 */
+/* 左側內容樣式 */
+.intro {
+    padding: 30px;
+    background: #f9f9f9;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    line-height: 1.8;
+    font-size: 1.1em;
 }
 
-.login-form {
-    max-width: 400px;  /* 設置最大寬度 */
+.intro h2 {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.intro p {
+    margin-bottom: 20px;
+    color: #555;
+    text-align: justify;
+}
+
+.benefits {
+    margin: 20px 0;
     display: flex;
     flex-direction: column;
+    gap: 15px;
 }
 
-h2 {
+.benefit-card {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.benefit-card h3 {
+    font-size: 1.5em;
+    color: #1abc9c;
+    margin: 0;
+}
+
+.benefit-card p {
+    margin: 0;
+    color: #333;
+}
+
+.cta {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+    color: #2980b9;
+}
+
+/* 右側登入表單樣式 */
+.login-form {
+    max-width: 400px;
+    padding: 50px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-form h2 {
     margin-bottom: 30px;
     text-align: center;
     color: #333;
-    font-size: 2em;  /* 增大字體 */
+    font-size: 2em;
 }
 
 input {
@@ -65,10 +135,8 @@ input {
     border: 2px solid #ddd;
     border-radius: 30px;
     background: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    width: 100%;  /* 確保輸入框佔滿容器寬度 */
-    box-sizing: border-box;  /* 包括padding和border在內的盒模型 */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 input:focus {
@@ -80,26 +148,27 @@ input:focus {
 button {
     padding: 15px;
     font-size: 18px;
-    background: linear-gradient(45deg, #3498db, #2980b9);
+    background: linear-gradient(45deg, #0066cc, #004d99);
     color: #fff;
     border: none;
     border-radius: 30px;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    font-weight: bold;  /* 加粗字體 */
-    width: 100%;  /* 確保按鈕佔滿容器寬度 */
-    margin-top: 10px;  /* 在按鈕上方添加一些間距 */
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 button:hover {
-    transform: translateY(-3px);
+    transform: scale(1.05);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* 頁尾樣式 */
 footer {
-    background-color: #f0f0f0;
+    background: #333;
+    color: #fff;
     text-align: center;
-    padding: 10px 0;
-    font-size: 0.9em;
-    color: #666;
+    padding: 1rem 0;
+    font-size: 0.9rem;
 }
