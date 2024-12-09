@@ -1,54 +1,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
 
-body {
-    font-family: 'Noto Sans TC', sans-serif;
+/* 通用樣式 */
+body, html {
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: #f9f9f9;
     color: #333;
+    height: 100%;
+    box-sizing: border-box;
 }
 
+/* 頁首樣式 */
 header {
-    background-color: #e0e0e0;
-    padding: 20px 0;
+    background: #333;
+    color: #fff;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     margin: 0;
     font-size: 2rem;
-    color: #333;
 }
 
+/* 導覽列樣式 */
 nav {
-    background-color: #d0d0d0;
-    padding: 10px 0;
-    text-align: center;
+    background: #555;
+    padding: 0.5rem 0;
 }
 
 nav ul {
-    list-style-type: none;
+    list-style: none;
+    display: flex;
+    justify-content: center;
     padding: 0;
     margin: 0;
-    display: inline-block;
 }
 
 nav ul li {
-    display: inline-block;
     margin: 0 1rem;
 }
 
 nav ul li a {
-    color: #333;
+    color: #fff;
     text-decoration: none;
     font-weight: bold;
+    transition: color 0.3s ease;
 }
 
 nav ul li a:hover {
-    text-decoration: underline;
-    color: #555;
+    color: #ffcc00;
 }
+
 
 .container {
     background-color: #ffffff;
@@ -111,8 +116,9 @@ ul {
 }
 
 footer {
+    background: #333;
+    color: #fff;
     text-align: center;
-    padding: 20px 0;
-    background-color: #34495e;
-    color: #ecf0f1;
+    padding: 1rem 0;
+    font-size: 0.9rem;
 }

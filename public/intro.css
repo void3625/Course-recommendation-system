@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+/* 通用樣式 */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: #f9f9f9;
+    color: #333;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* 頁首樣式 */
+header {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+/* 導覽列樣式 */
+nav {
+    background: #555;
+    padding: 0.5rem 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin: 0 1rem;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #ffcc00;
+}
+
+/* 主內容樣式 */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 160px); /* 減去 header 和 footer 的高度 */
+    padding: 2cm; /* 上下左右留 2 公分 */
+    box-sizing: border-box;
+}
+
+.container {
+    display: flex;
+    max-width: calc(100% - 4cm); /* 減去左右 2 公分空間 */
+    max-height: calc(100% - 4cm); /* 減去上下 2 公分空間 */
+    width: 100%;
+    height: 100%;
+    gap: 2rem;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 20px; /* 圓角 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.intro-section {
+    flex: 1;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 15px; /* 內框的圓角 */
+    background: #fefefe;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 大標題藝術化 */
+.artistic-title {
+    font-size: 3rem; /* 增大字體 */
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 加入陰影效果 */
+    font-family: 'Georgia', serif; /* 切換成藝術字體 */
+}
+
+/* 通用段落文字放大 */
+.intro-section p {
+    font-size: 1.2rem; /* 放大文字 */
+    line-height: 1.8;
+    text-align: justify;
+    color: #555;
+}
+
+/* CTA 文字特殊樣式 */
+.cta-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 1rem 0;
+    color: #e74c3c;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* MBTI 和 CEEC 圖片區域 */
+.mbti-images, .ceec-images {
+    display: flex;
+    flex-wrap: wrap; /* 允許換行 */
+    justify-content: center;
+    gap: 1rem; /* 圖片間距 */
+    margin-top: 1rem;
+}
+
+.mbti-images img, .ceec-images img {
+    flex: 0 0 calc(45% - 1rem); /* 每行兩張圖片 */
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mbti-images img:hover, .ceec-images img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 頁尾樣式 */
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+}
+
+/* 遮罩樣式 */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* 半透明遮罩 */
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 隱藏遮罩 */
+.hidden {
+    display: none;
+}
+
+/* 高亮提示框 */
+.tooltip {
+    position: absolute;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+}
+
+.tooltip p {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.tooltip button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.tooltip button:hover {
+    background: #0056b3;
+}
+
+.highlighted {
+    color: #000 !important;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    padding: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    position: relative;
+}

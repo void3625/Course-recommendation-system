@@ -73,7 +73,7 @@ function displayCourses(courses) {
                         },
                         body: JSON.stringify({
                             course_id: course.id,
-                            course_name: course.course_name, // 傳遞課程名稱
+                            course_name: course.course_name, 
                             MBTI_type: course.MBTI_type,
                             CEEC_type: course.CEEC_type,
                             link: course.link,
