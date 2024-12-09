@@ -8,6 +8,7 @@ require('dotenv').config(); // 加載 .env 文件中的環境變量
 const path = require('path');
 const { Pool } = require('pg'); // 確保引入 pg 模組以建立資料庫連接池
 // 創建 Express 應用程序
+const { spawn } = require('child_process'); // 用於啟動子進程
 const app = express();
 const port = 3000;
 const session = require('express-session'); //啟詮的
@@ -29,6 +30,23 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: false } // 若使用 HTTPS，將此設為 true
 }));
+
+// 啟動 backend 資料夾中的 app.py 子進程
+const pythonProcess = spawn('python', ['backend/app.py']);
+
+pythonProcess.stdout.on('data', (data) => {
+  console.log(`app.py stdout: ${data}`);
+});
+
+pythonProcess.stderr.on('data', (data) => {
+  console.error(`app.py stderr: ${data}`);
+});
+
+pythonProcess.on('close', (code) => {
+  console.log(`app.py process exited with code ${code}`);
+});
+
+
 function isAuthenticated(req, res, next) {
   if (req.session.user) {
       next();
