@@ -104,3 +104,5 @@ def recommend_courses(user_mbti, user_ceec, top_n=10):
     ).tolist()
 
     return results
+
+

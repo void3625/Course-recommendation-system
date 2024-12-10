@@ -128,3 +128,5 @@ document.addEventListener('DOMContentLoaded', async function () {
         console.error('獲取推薦結果時發生錯誤:', error);
     }
 });
+
+
