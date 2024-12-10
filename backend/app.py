@@ -1,14 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import logging
-from recommend import recommend_courses
+from recommend import recommend_courses, course_df
 from get_db_connection import get_db_connection
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', encoding='utf-8')
 
-@app.route('/api/recommend', methods=['POST', 'OPTIONS'])
+@app.route('/api/recommend', methods=['POST'])
 def recommend():
     if request.method == "OPTIONS":
         response = jsonify({"message": "Preflight allowed"})
@@ -36,10 +36,18 @@ def recommend():
 
         if user_record:
             user_mbti, user_ceec = user_record
-            logging.debug(f"User data retrieved: mbti={user_mbti}, ceec={user_ceec}")
+
+            # 提取前兩個字母，並移除逗號
+            user_ceec = ''.join(user_ceec.split(',')[:2]).strip()
+            logging.debug(f"User CEEC processed: {user_ceec}")
+
+            # 確保 course_df 已加載
+            if course_df is None:
+                logging.error("課程數據未加載，無法進行推薦。")
+                return jsonify({"error": "課程數據未加載"}), 500
 
             # 調用推薦函數
-            recommendations = recommend_courses(user_mbti, user_ceec)
+            recommendations = recommend_courses(user_mbti, user_ceec, course_df, top_n=10)
             logging.info(f"Recommendations generated for user_id={user_id}")
 
             response = jsonify({"recommended_courses": recommendations})
@@ -63,6 +71,5 @@ def recommend():
         if 'conn' in locals() and conn is not None:
             conn.close()
 
-
 if __name__ == '__main__':
-    app.run(debug=True, host='localhost', port=5000)
+    app.run(debug=False, host='localhost', port=5000)
