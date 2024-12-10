@@ -1,14 +1,11 @@
 import pandas as pd
 import os
-
 import logging
-
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
     encoding="utf-8"
 )
-
 
 # 獲取當前腳本的目錄
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -51,52 +48,57 @@ except Exception as e:
     print(f"讀取文件時出現錯誤: {e}")
     course_df = None
 
-# 基於 MBTI 前四個字母的匹配邏輯
 def recommend_all_strategies(user_mbti, user_ceec, course_df, top_n=5, mbti_weight=0.4, ceec_weight=0.6):
     """
-    同時返回基於 MBTI、CEEC 和 MBTI+CEEC 的推薦結果，其中 MBTI+CEEC 帶有權重計算。
+    根據使用者的 MBTI 和 CEEC 進行推薦，包括單獨的 MBTI、單獨的 CEEC，以及 MBTI+CEEC 加權推薦。
     """
     recommendations = {}
 
-    try:
-        # 基於 MBTI 的推薦
-        mbti_columns = [col for col in course_df.columns if col in user_mbti]
-        if mbti_columns:
-            mbti_courses = course_df[course_df[mbti_columns].any(axis=1)].head(top_n)
-            recommendations['MBTI'] = mbti_courses['課程名稱'].tolist()
-        else:
-            recommendations['MBTI'] = []
+    # MBTI 推薦邏輯
+    mbti_columns = [col for col in course_df.columns if col == user_mbti]
+    logging.debug(f"篩選出的 MBTI 列: {mbti_columns}")
 
-        # 基於 CEEC 的推薦
-        ceec_columns = [col for col in course_df.columns if col in user_ceec]
-        if ceec_columns:
-            ceec_courses = course_df[course_df[ceec_columns].any(axis=1)].head(top_n)
-            recommendations['CEEC'] = ceec_courses['課程名稱'].tolist()
-        else:
-            recommendations['CEEC'] = []
+    if mbti_columns:
+        mbti_courses = course_df[course_df[mbti_columns].any(axis=1)].head(top_n)
+        recommendations['MBTI'] = mbti_courses['課程名稱'].tolist()
+    else:
+        recommendations['MBTI'] = []
 
-        # 基於 MBTI+CEEC 的推薦（帶權重計算）
-        if mbti_columns and ceec_columns:
-            # 填補空值避免 NaN
-            course_df[mbti_columns] = course_df[mbti_columns].fillna(0)
-            course_df[ceec_columns] = course_df[ceec_columns].fillna(0)
+    # CEEC 推薦邏輯
+    ceec_prefix = user_ceec[0]  # 首字母
+    ceec_full = user_ceec       # 完整類型
 
-            # 計算分數
-            course_df['MBTI_score'] = course_df[mbti_columns].max(axis=1)
-            course_df['CEEC_score'] = course_df[ceec_columns].max(axis=1)
-            course_df['combined_score'] = (
-                mbti_weight * course_df['MBTI_score'] +
-                ceec_weight * course_df['CEEC_score']
-            )
+    ceec_columns = [col for col in course_df.columns if col == ceec_prefix or col == ceec_full]
+    logging.debug(f"篩選出的 CEEC 列: {ceec_columns}")
 
-            # 篩選排序並選取前 N 名
-            combined_courses = course_df.sort_values(by='combined_score', ascending=False).head(top_n)
-            recommendations['MBTI+CEEC'] = combined_courses['課程名稱'].tolist()
-        else:
-            recommendations['MBTI+CEEC'] = []
+    if ceec_columns:
+        ceec_courses = course_df[course_df[ceec_columns].any(axis=1)].head(top_n)
+        recommendations['CEEC'] = ceec_courses['課程名稱'].tolist()
+    else:
+        recommendations['CEEC'] = []
 
-    except Exception as e:
-        recommendations['error'] = str(e)
+    # MBTI+CEEC 加權推薦邏輯
+    if mbti_columns and ceec_columns:
+        # 填補空值以避免計算錯誤
+        course_df[mbti_columns] = course_df[mbti_columns].fillna(0)
+        course_df[ceec_columns] = course_df[ceec_columns].fillna(0)
+        course_df['MBTI_score'] = course_df[mbti_columns].max(axis=1)
+        course_df['CEEC_score'] = course_df[ceec_columns].max(axis=1)
+        course_df['combined_score'] = (
+            mbti_weight * course_df['MBTI_score'] +
+            ceec_weight * course_df['CEEC_score']
+        )
+
+        combined_courses = course_df.sort_values(by='combined_score', ascending=False).head(top_n)
+        recommendations['MBTI+CEEC'] = combined_courses['課程名稱'].tolist()
+        logging.debug("MBTI_score 列統計:\n{}".format(course_df['MBTI_score'].describe()))
+        logging.debug("CEEC_score 列統計:\n{}".format(course_df['CEEC_score'].describe()))
+        logging.debug("combined_score 列統計:\n{}".format(course_df['combined_score'].describe()))
+
+    else:
+        recommendations['MBTI+CEEC'] = []
 
     return recommendations
 
+        
+print(course_df.columns)
