@@ -22,25 +22,44 @@ file_mbti_self = os.path.join(base_dir, 'data', 'AllMBTI我2.0.xlsx')
 file_mbti_object = os.path.join(base_dir, 'data', 'AllMBTI物2.0.xlsx')
 
 try:
-    # 讀取所有 CEEC 文件
-    df_ceec_human = pd.read_excel(file_ceec_human)
-    df_ceec_sky = pd.read_excel(file_ceec_sky)
-    df_ceec_self = pd.read_excel(file_ceec_self)
-    df_ceec_object = pd.read_excel(file_ceec_object)
+    # Load CEEC files
+    df_ceec_human = pd.read_excel(file_ceec_human, engine='openpyxl')
+    df_ceec_sky = pd.read_excel(file_ceec_sky, engine='openpyxl')
+    df_ceec_self = pd.read_excel(file_ceec_self, engine='openpyxl')
+    df_ceec_object = pd.read_excel(file_ceec_object, engine='openpyxl')
+    
+    # Combine CEEC data
+    combined_ceec_df = pd.concat(
+        [df_ceec_human, df_ceec_sky, df_ceec_self, df_ceec_object],
+        ignore_index=True
+    )
+    
+    # Load MBTI files
+    df_mbti_human = pd.read_excel(file_mbti_human, engine='openpyxl')
+    df_mbti_sky = pd.read_excel(file_mbti_sky, engine='openpyxl')
+    df_mbti_self = pd.read_excel(file_mbti_self, engine='openpyxl')
+    df_mbti_object = pd.read_excel(file_mbti_object, engine='openpyxl')
+    
+    # Combine MBTI data
+    combined_mbti_df = pd.concat(
+        [df_mbti_human, df_mbti_sky, df_mbti_self, df_mbti_object],
+        ignore_index=True
+    )
+    
+    # Save combined results
+    combined_ceec_df.to_csv('combined_ceec_path', encoding='utf-8-sig', index=False)
+    combined_mbti_df.to_csv('combined_mbti_path', encoding='utf-8-sig', index=False)
 
-    # 讀取所有 MBTI 文件
-    df_mbti_human = pd.read_excel(file_mbti_human)
-    df_mbti_sky = pd.read_excel(file_mbti_sky)
-    df_mbti_self = pd.read_excel(file_mbti_self)
-    df_mbti_object = pd.read_excel(file_mbti_object)
-
-    # 合併所有數據到一個 DataFrame
-    course_df = pd.concat([
-        df_ceec_human, df_ceec_sky, df_ceec_self, df_ceec_object,
-        df_mbti_human, df_mbti_sky, df_mbti_self, df_mbti_object
-    ], ignore_index=True)
-    print("所有文件加載成功，數據已合併到 course_df。")
-
+     # Ensure the key column is named consistently
+    combined_ceec_df.rename(columns={'課程名稱': '課程名稱'}, inplace=True)
+    combined_mbti_df.rename(columns={'課程名稱': '課程名稱'}, inplace=True)
+    combined_ceec_df['來源'] = 'CEEC'
+    combined_mbti_df['來源'] = 'MBTI'
+    # Merge the two dataframes on course_name
+    course_df = pd.merge(combined_ceec_df, combined_mbti_df, on='課程名稱', how='outer', suffixes=('_ceec', '_mbti'))
+    
+    # Save the merged dataframe
+    course_df.to_csv('merged_path', encoding='utf-8-sig', index=False)
 except FileNotFoundError as e:
     print(f"找不到文件: {e}")
     course_df = None  # 如果文件未找到，設置為 None
@@ -50,16 +69,13 @@ except Exception as e:
 
 def recommend_all_strategies(user_mbti, user_ceec, course_df, top_n=5, mbti_weight=0.4, ceec_weight=0.6):
     """
-    根據使用者的 MBTI 和 CEEC 進行推薦，包括單獨的 MBTI、單獨的 CEEC，以及 MBTI+CEEC 加權推薦。
+    根據使用者的 MBTI 和 CEEC 進行推薦，包括單獨的 MBTI、單獨的 CEEC，以及 MBTI+CEEC 加正推薦。
     """
     recommendations = {}
 
     # MBTI 推薦邏輯
-    mbti_columns = [col for col in course_df.columns if col == user_mbti]
-    logging.debug(f"篩選出的 MBTI 列: {mbti_columns}")
-
-    if mbti_columns:
-        mbti_courses = course_df[course_df[mbti_columns].any(axis=1)].head(top_n)
+    if user_mbti in combined_mbti_df.columns:
+        mbti_courses = combined_mbti_df.nlargest(top_n, user_mbti)[['課程名稱', user_mbti]]
         recommendations['MBTI'] = mbti_courses['課程名稱'].tolist()
     else:
         recommendations['MBTI'] = []
@@ -68,37 +84,24 @@ def recommend_all_strategies(user_mbti, user_ceec, course_df, top_n=5, mbti_weig
     ceec_prefix = user_ceec[0]  # 首字母
     ceec_full = user_ceec       # 完整類型
 
-    ceec_columns = [col for col in course_df.columns if col == ceec_prefix or col == ceec_full]
-    logging.debug(f"篩選出的 CEEC 列: {ceec_columns}")
-
-    if ceec_columns:
-        ceec_courses = course_df[course_df[ceec_columns].any(axis=1)].head(top_n)
+    if ceec_prefix in combined_ceec_df.columns or ceec_full in combined_ceec_df.columns:
+        ceec_scores = combined_ceec_df[[col for col in [ceec_prefix, ceec_full] if col in combined_ceec_df.columns]].max(axis=1)
+        ceec_courses = combined_ceec_df.loc[ceec_scores.nlargest(top_n).index, ['課程名稱']]
         recommendations['CEEC'] = ceec_courses['課程名稱'].tolist()
     else:
         recommendations['CEEC'] = []
 
-    # MBTI+CEEC 加權推薦邏輯
-    if mbti_columns and ceec_columns:
-        # 填補空值以避免計算錯誤
-        course_df[mbti_columns] = course_df[mbti_columns].fillna(0)
-        course_df[ceec_columns] = course_df[ceec_columns].fillna(0)
-        course_df['MBTI_score'] = course_df[mbti_columns].max(axis=1)
-        course_df['CEEC_score'] = course_df[ceec_columns].max(axis=1)
+    # MBTI+CEEC 推薦
+    if user_mbti in combined_mbti_df.columns and (ceec_prefix in combined_ceec_df.columns or ceec_full in combined_ceec_df.columns):
+        mbti_scores = combined_mbti_df[user_mbti] if user_mbti in combined_mbti_df.columns else 0
+        ceec_scores = combined_ceec_df[[col for col in [ceec_prefix, ceec_full] if col in combined_ceec_df.columns]].max(axis=1).fillna(0)
         course_df['combined_score'] = (
-            mbti_weight * course_df['MBTI_score'] +
-            ceec_weight * course_df['CEEC_score']
+            mbti_weight * mbti_scores +
+            ceec_weight * ceec_scores
         )
-
-        combined_courses = course_df.sort_values(by='combined_score', ascending=False).head(top_n)
+        combined_courses = course_df.nlargest(top_n, 'combined_score')[['課程名稱', 'combined_score']]
         recommendations['MBTI+CEEC'] = combined_courses['課程名稱'].tolist()
-        logging.debug("MBTI_score 列統計:\n{}".format(course_df['MBTI_score'].describe()))
-        logging.debug("CEEC_score 列統計:\n{}".format(course_df['CEEC_score'].describe()))
-        logging.debug("combined_score 列統計:\n{}".format(course_df['combined_score'].describe()))
-
     else:
         recommendations['MBTI+CEEC'] = []
 
     return recommendations
-
-        
-print(course_df.columns)
